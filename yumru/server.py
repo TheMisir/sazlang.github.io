@@ -8,9 +8,8 @@ import math
 
 MAX_PLAYER = 100
 MAP_SIZE = 1000
-FOODS_COUNT = 3
-BODY_COUNT = 5
-BODY_LENGTH = 1
+FOODS_COUNT = 50
+PLAYER_SIZE = 50
 SPEED = 10
 
 clients = {}
@@ -24,16 +23,6 @@ def init_foods():
 	for i in range(FOODS_COUNT):
 		foods.append(random_point())
 
-def random_body():
-	body = []
-	body.append(random_point())
-	angle = random.random()*2*math.pi
-	dx = math.cos(angle) * BODY_LENGTH
-	dy = math.sin(angle) * BODY_LENGTH
-	for i in range(1, BODY_COUNT):
-		body.append((body[0][0] + dx * i, body[0][1] + dy * i))
-	return body
-
 def random_id():
 	if len(empty_ids) > 0:
 		return empty_ids.pop(0)
@@ -41,21 +30,23 @@ def random_id():
 		return -1
 
 def explicit_snapshot(_id):
-	txt = '['
+	txt = '{'
 	first = True
 	for x in clients:
 		if x != _id:
 			if not first:
 				txt += ','
 			first = False
-			txt += clients[x].snapshot()
-	txt += ']'
+			txt += '"' + str(x) + '":' + clients[x].snapshot()
+	txt += '}'
 	return txt
 
 class MyServerProtocol(WebSocketServerProtocol):
 
 	ingame = False
-	body = []
+	position = []
+	size = PLAYER_SIZE
+	speed = SPEED
 	id = -1
 
 	def onConnect(self, request):
@@ -73,11 +64,12 @@ class MyServerProtocol(WebSocketServerProtocol):
 				self.sendClose()
 
 			self.name = msg
-			self.body = random_body()
-			self.sendMessage(('{"f":' + json.dumps(foods) + ',"b":' + json.dumps(self.body) + ',"l":' + str(BODY_LENGTH) + ',"i":' + str(self.id) + ',"s":' + str(SPEED) + ',"sh":' + explicit_snapshot(self.id) + "}").encode("utf8"), False)
-
+			self.position = random_point()
 			self.ingame = True
 			clients[self.id] = (self)
+
+			self.sendMessage(('{"f":' + json.dumps(foods) + ',"p":' + explicit_snapshot(-1) + ',"i":' + str(self.id) + "}").encode("utf8"), False)
+
 			print(self.name + " joined game")
 			print("empty slots: " + str(len(empty_ids)))
 			print(explicit_snapshot(-1))
@@ -95,14 +87,13 @@ class MyServerProtocol(WebSocketServerProtocol):
 			print("empty slots: " + str(len(empty_ids)))
 
 	def snapshot(self):
-		return '{"i":' + str(self.id) + ',"n":"' + str(self.name) + '","b":' + json.dumps(self.body) + '}'
+		return '{"n":"' + str(self.name) + '","p":' + json.dumps(self.position) + ',"s":"' + str(self.size) + '"}'
 
 
 if __name__ == '__main__':
 	
 	init_foods()
 	print("foods init.")
-	print(json.dumps(foods))
 
 	factory = WebSocketServerFactory(u"ws://127.0.0.1:9000")
 	factory.protocol = MyServerProtocol
