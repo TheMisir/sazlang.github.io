@@ -1,0 +1,15 @@
+// ədəd
+yerli a = 2.6;
+yaz(a);
+
+// mətn
+a = "salam dünya";
+yaz(a);
+
+// heç
+a = heç;
+yaz(a);
+
+işləv kvadrat(a) { qaytar a * a; }
+a = kvadrat; // işləv
+yaz(a);

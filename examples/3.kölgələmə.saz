@@ -1,0 +1,8 @@
+yerli a = 5;
+
+{
+	yerli a = 2;
+	yaz(a);
+}
+
+yaz(a);

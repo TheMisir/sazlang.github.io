@@ -1,0 +1,29 @@
+sinif Fiqur {
+	sahə() { qaytar 0; }
+}
+
+sinif Dördbucaqlı < Fiqur {
+	qurucu(en, uzunluq) {
+		öz.en = en;
+		öz.uzunluq = uzunluq;
+	}
+
+	sahə() {
+		qaytar öz.en * öz.uzunluq;
+	}
+}
+
+sinif Dairə < Fiqur {
+	qurucu(radius) {
+		öz.radius = radius;
+	}
+
+	sahə() {
+		qaytar 2 * 3.14 * öz.radius * öz.radius;
+	}
+}
+
+yerli a = Dördbucaqlı(2, 5);
+yerli b = Dairə(3);
+yaz("a fiqurunun sahəsi: ", a.sahə());
+yaz("b fiqurunun sahəsi: ", b.sahə());

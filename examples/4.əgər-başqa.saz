@@ -1,0 +1,9 @@
+yerli a = 2;
+
+əgər (a > 0) {
+	yaz("a ədədi müsbətdir");
+} başqa əgər (a < 0) {
+	yaz("a ədədi mənfidir");
+} başqa {
+	yaz("a ədədi nə müsbət nə də mənfidir");
+}

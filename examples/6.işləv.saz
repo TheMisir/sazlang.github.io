@@ -1,0 +1,6 @@
+işləv topla(a, b) {
+	qaytar a + b;
+}
+
+yerli a = topla(2, 3);
+yaz(a);

@@ -1,0 +1,19 @@
+sinif Dördbucaqlı {
+	qurucu(en, uzunluq) {
+		öz.en = en;
+		öz.uzunluq = uzunluq;
+	}
+
+	sahə() {
+		qaytar öz.en * öz.uzunluq;
+	}
+}
+
+sinif Kvadrat < Dördbucaqlı {
+	qurucu(en) {
+		ali.qurucu(en, en);
+	}
+}
+
+yerli a = Kvadrat(3);
+yaz(a.sahə());

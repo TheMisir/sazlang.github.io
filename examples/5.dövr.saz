@@ -1,0 +1,10 @@
+yerli a = 0;
+
+nəqədərki (a < 10) {
+	yaz(a);
+	a = a + 1;
+}
+
+üçün (yerli i = 0; i < 10; i = i + 1) {
+	yaz(i);
+}

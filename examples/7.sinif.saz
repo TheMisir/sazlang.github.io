@@ -1,0 +1,13 @@
+sinif İnsan {
+	qurucu(ad, soyad) {
+		öz.ad = ad;
+		öz.soyad = soyad;
+	}
+
+	tamad() {
+		qaytar öz.ad + " " + öz.soyad;
+	}
+}
+
+yerli mən = İnsan("elgün", "hüseynli");
+yaz(mən.tamad());

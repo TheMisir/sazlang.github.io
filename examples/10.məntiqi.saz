@@ -1,0 +1,15 @@
+əgər (doğru vəya yanlış) {
+	yaz("a");
+}
+
+əgər (doğru və yanlış) {
+	yaz("b");
+}
+
+əgər ((doğru və yanlış) vəya doğru) {
+	yaz("c");
+}
+
+əgər(2 > 0 və 2 < 0) {
+	yaz("d");
+}

@@ -1,227 +1,145 @@
 <!DOCTYPE html>
-<html lang="en-US">
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=640">
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	<title>saz onlayn editor</title>
+	<link rel="stylesheet" data-name="vs/editor/editor.main" href="./monaco-editor/editor/editor.main.css">
+	<style type="text/css">
+		* {
+			box-sizing: border-box;
+			color: white;
+			font-family: monospace;
+		}
+		body {
+			background-color: #1e1e1e;
+			margin: 0;
+			overflow: hidden;
+		}
+		#container {
+			position: absolute;
+			left: 0;
+			right: 40%;
+			top: 50px;
+			bottom: 0;
+		}
+		#console {
+			position: absolute;
+			left: 60%;
+			right: 0;
+			top: 50px;
+			bottom: 0;
+			background-color: #1e1e1e;
+			padding: 10px 20px;
+		}
+		#console > br:after {
+			content: "> ";
+		}
+		.topbar {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			height: 50px;
+			background-color: #2f2f2f;
+			border-bottom: 1px solid #383838;
+			box-shadow: 0px 1px 5px black;
+			z-index: 10;
+			padding-left: auto;
+			padding-right: auto;
+		}
+		.item {
+			background-color: transparent;
+			cursor: pointer;
+			user-select: none;
+			line-height: 0px;
+			padding: 25px 20px;
+		}
+		.item:hover {
+			background-color: gray;
+		}
+		.item-left {
+			border-right: 1px solid gray;
+			float: left;
+		}
+		.item-right {
+			border-left: 1px solid gray;
+			float: right;
+		}
+		.item-open {
+			padding: 20px 20px;
+			border-bottom: 10px solid gray;
+		}
+		select {
+			height: 50px;
+			padding-top: 0 !important;
+			padding-bottom: 0 !important;
+			border: 0;
+			outline: none;
+		}
+	</style>
+</head>
+<body>
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=" media="screen">
-    <link rel="stylesheet" href="/assets/css/mobile.css" media="handheld, only screen and (max-device-width:640px)">
-    <link rel="stylesheet" href="/assets/css/non-screen.css" media="handheld, only screen and (max-device-width:640px)">
+<div class="topbar">
+	<div class="item item-left" onclick="_run()">▶ İŞLƏT</div>
+	<div class="item item-right" onclick="window.location.href = './downloads.html';">YÜKLƏMƏLƏR</div>
+	<div class="item item-right item-open">ONLAYN EDİTOR</div>
+	<select class="item item-left" id="examples-select" onchange="update_editor();"></select>
+</div>
+<div id="console"></div>
+<div id="container"></div>
 
-    <script type="text/javascript" src="/assets/js/modernizr.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/js/headsmart.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('#main_content').headsmart()
-      })
-    </script>
+<script>var require = { paths: { 'vs': './monaco-editor/' } };</script>
+<script src="./monaco-editor/loader.js"></script>
+<script src="./monaco-editor/editor/editor.main.nls.js"></script>
+<script src="./monaco-editor/editor/editor.main.js"></script>
+<script src="./monaco-saz.js"></script>
+<script src="saz_web.js"></script>
+<script src="examples.js"></script>
 
-<!-- Begin Jekyll SEO tag v2.4.0 -->
-<title>SAZ | proqramlaşdırma dili</title>
-<meta name="generator" content="Jekyll v3.7.3" />
-<meta property="og:title" content="SAZ" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="proqramlaşdırma dili" />
-<meta property="og:description" content="proqramlaşdırma dili" />
-<link rel="canonical" href="http://localhost:4000/" />
-<meta property="og:url" content="http://localhost:4000/" />
-<meta property="og:site_name" content="SAZ" />
-<script type="application/ld+json">
-{"headline":"SAZ","url":"http://localhost:4000/","name":"SAZ","description":"proqramlaşdırma dili","@type":"WebSite","@context":"http://schema.org"}</script>
-<!-- End Jekyll SEO tag -->
+<script>
+	var examples_selector = document.getElementById('examples-select');
+	for(var key in examples_data) {
+		if(!examples_data.hasOwnProperty(key))
+			continue;
+		var opt = document.createElement('option');
+			opt.innerText = key;
+			opt.setAttribute('value', key);
+		examples_selector.append(opt);
 
-  </head>
+	}
+	function update_editor() {
+		editor.setValue(examples_data[examples_selector.value]);
+	}
+	monaco.languages.register({ id: 'saz' });
+	monaco.languages.setMonarchTokensProvider('saz', sazTokensProvider());
+	monaco.languages.registerCompletionItemProvider('saz', sazCompletionProvider());
+	var editor = monaco.editor.create(document.getElementById('container'), {
+		value: examples_data[examples_selector.value],
+		language: 'saz',
+		theme: 'vs-dark'
+	});
+	window.onresize = function() { editor.layout(); }
+	var editor_console = document.getElementById('console');
+	function onprint(txt) {
+		if (txt != null) {
+			var t = document.createElement('span');
+			t.textContent = txt;
+			editor_console.append(t);
+		}
+		else {
+			var t = document.createElement('br');
+			editor_console.append(t);
+		}
 
-  <body>
-    <a id="forkme_banner" href="">View on GitHub</a>
-    <div class="shell">
+	}
+	function _run() {
+		editor_console.innerHTML = "";
+		saz_run_string(editor.getValue());
+	}
+	saz_registeroutlistener(onprint);
+</script>
 
-      <header>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <h1>SAZ</h1>
-            <h2>proqramlaşdırma dili</h2>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-      </header>
-
-      
-        <section id="downloads">
-          <span class="inner">
-            <a href="google.com" class="zip"><em>yüklə</em> x86</a><a href="google.com" class="tgz"><em>yüklə</em> x64</a>
-          </span>
-        </section>
-      
-
-
-      <span class="banner-fix"></span>
-
-
-      <section id="main_content">
-        <h1 id="saz-nədi̇r"><a href=""></a>SAZ NƏDİR?</h1>
-
-<p>Saz Azərbaycan dilində olan ilk proqramlaşdırma dilidir.</p>
-
-<p>Sazın qaynaq kodu <code class="highlighter-rouge">.saz</code> fayl uzantısı ilə saxlanılır. Daha sonra siz</p>
-
-<h2 id="nümunələr"><a href=""></a>NÜMUNƏLƏR</h2>
-
-<p>Aşağıdakı nümunə kodlarını hər hansı bir fayla UTF-8 kodlaşdırma ilə
-yazdıqdan sonra <code class="highlighter-rouge">saz [fayl-adı]</code> komandası ilə proqramı başlada bilərsiniz.</p>
-
-<p>Yox əgər fayla yazmaq istəmirsinizsə <code class="highlighter-rouge">saz</code> komandası ilə <code class="highlighter-rouge">saz shell</code>‘ni
-başladaraq program kodunu <code class="highlighter-rouge">shell</code>‘ə yazmağınız kifayətdir.</p>
-
-<h3 id="salam-dünya"><a href=""></a>SALAM DÜNYA</h3>
-<hr />
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yaz("salam dünya");
-</code></pre></div></div>
-
-<p><br /></p>
-
-<h3 id="dəyi̇şənlər"><a href=""></a>DƏYİŞƏNLƏR</h3>
-<hr />
-
-<p>Saz dilində 3 müxtəlif dəyişən tipi mövcuddur. <code class="highlighter-rouge">mətn</code>, <code class="highlighter-rouge">ədəd</code> və <code class="highlighter-rouge">məntiqi</code></p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// mətn
-ad = "Məlikməmməd";
-
-// ədəd
-boy = 1.75;
-
-// məntiqi
-a = doğru;
-b = yanlış;
-
-</code></pre></div></div>
-
-<p>Əvvəlcədən təyin olunmuş dəyişənləri yenidən təyin etmək mümkündür.
-Bu halda köhnə məlumat <strong>silinəcək</strong> və yenisi ilə əvəz olunacaq.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>boy = "Oğuz";
-boy = 1.75;
-</code></pre></div></div>
-
-<p>Təyin olunmamış dəyişənlər <code class="highlighter-rouge">boş</code> dəyərinə məxsusdur. Dəyişənə <code class="highlighter-rouge">boş</code>
-mənimsətmək onu silir.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ad = "Məlikməmməd";
-ad = boş;
-</code></pre></div></div>
-
-<h4 id="yerli-dəyişənlər"><a href=""></a>yerli dəyişənlər</h4>
-
-<p>Yerli dəyişənlər sadəcə təyin olunduğu sahəyə məxsusdurlar. Və bu
-sahə sona çatanda silinirlər.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
-  yerli alma = 10;
-  yaz(alma);  // 10
-}
-yaz(alma);  // boş
-</code></pre></div></div>
-
-<p>Bu tip dəyişənlər <strong>kölgələmə</strong> xüsusiyyətinə malikdirlər. Yəni o
-adda qabaqcadan təyin olunmuş dəyişənləri kölgələyirlər.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>alma = 5;
-{
-  yerli alma = 10;
-  yaz(alma); // 10
-}
-yaz(alma); // 5
-</code></pre></div></div>
-
-<p><br /></p>
-
-<h3 id="əgər-başqa"><a href=""></a>ƏGƏR-BAŞQA</h3>
-<hr />
-<p>Verilmiş şərt <strong>doğru</strong> olduğu təqdirdə bəyanatın əsas gövdəsini yerinə
-yetirir. Əks halda isə <code class="highlighter-rouge">başqa</code> gövdəsini.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>icazəVar = doğru;
-
-əgər(icazəVar) {
-  yaz("icazə var");
-} başqa {
-  yaz("icazə yoxdur");
-}
-</code></pre></div></div>
-
-<p>Sadəcə əsas gövdədən ibarət <code class="highlighter-rouge">əgər</code> bəyanatı da mümkündür.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>icazəVar = doğru;
-
-əgər(icazəVar) {
-  yaz("icazə var");
-}
-</code></pre></div></div>
-
-<p><code class="highlighter-rouge">əgər</code> bəyanatının <code class="highlighter-rouge">başqa</code> gövdəsinə yeni <code class="highlighter-rouge">əgər</code> bəyanatı
-calayaraq daha mürəkkəb bəyanat yaratmaq mümkündür.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a = 7;
-
-əgər(a &gt; 0) {
-  yaz("a ədədi müsbətdir")
-} başqa əgər(a &lt; 0) {
-  yaz("a ədədi mənfidir")
-} başqa {
-  yaz("a ədədi nə müsbət nə də mənfidir")
-}
-
-// nəticə: a ədədi müsbətdir
-</code></pre></div></div>
-
-<p><br /></p>
-<h3 id="nəqədərki̇"><a href=""></a>NƏQƏDƏRKİ</h3>
-<hr />
-<p>Verilmiş şərt <code class="highlighter-rouge">doğru</code> olduğu müddətcə bəyanatın gövdəsi
-yerinə yetirilir.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a = 0;
-
-nəqədərki(a &lt; 10)
-{
-  yaz(a + "\n");
-  a++;
-}
-</code></pre></div></div>
-
-<p><br /></p>
-<h3 id="i̇şləv"><a href=""></a>İŞLƏV</h3>
-<hr />
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>işləv topla(a, b) {
-  qaytar a + b;
-}
-
-a = topla(2, 3); // 5
-</code></pre></div></div>
-
-      </section>
-
-      <footer>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            
-              <p>this project by <a href="">SAZLANG</a> can be found on <a href="">GitHub</a></p>
-            
-            
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-        <p>Generated with <a href="https://pages.github.com">GitHub Pages</a> using Merlot</p>
-        <span class="octocat"></span>
-      </footer>
-
-    </div>
-
-    
-  </body>
+</body>
 </html>

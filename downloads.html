@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	<title>yükləmələr</title>
+	<link rel="stylesheet" data-name="vs/editor/editor.main" href="./monaco-editor/editor/editor.main.css">
+	<style type="text/css">
+		* {
+			box-sizing: border-box;
+			color: white;
+			font-family: monospace;
+		}
+		body {
+			background-color: #1e1e1e;
+			margin: 0;
+			overflow: hidden;
+		}
+		.topbar {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			height: 50px;
+			background-color: #2f2f2f;
+			border-bottom: 1px solid #383838;
+			box-shadow: 0px 1px 5px black;
+			z-index: 10;
+			padding-left: auto;
+			padding-right: auto;
+		}
+		.item {
+			background-color: transparent;
+			cursor: pointer;
+			user-select: none;
+			line-height: 0px;
+			padding: 25px 20px;
+		}
+		.item:hover {
+			background-color: gray;
+		}
+		.item-left {
+			border-right: 1px solid gray;
+			float: left;
+		}
+		.item-right {
+			border-left: 1px solid gray;
+			float: right;
+		}
+		.item-open {
+			padding: 20px 20px;
+			border-bottom: 10px solid gray;
+		}
+		.container {
+			margin: 50px auto 0 auto;
+			padding-top: 20px;
+			width: 70%;
+		}
+		h1 {
+			color: orange;
+			border-bottom: 1px solid orange;
+		}
+		a {
+			color: orange;
+		}
+		code, .code {
+			background-color: #333;
+		}
+		.code { padding: 5px; }
+	</style>
+</head>
+<body>
+
+<div class="topbar">
+	<div class="item item-right item-open">YÜKLƏMƏLƏR</div>
+	<div class="item item-right" onclick="window.location.href = './index.html';">ONLAYN EDİTOR</div>
+</div>
+
+<div class="container">
+	<h1>Yükləmələr</h1>
+	Windows: <a href="./bins/saz_windows_x64.zip">x64</a> vəya <a href="./bins/saz_windows_x86.zip">x86</a><br>
+	Linux: <a href="./bins/saz_linux_x64.zip">x64</a> vəya <a href="./bins/saz_linux_x86.zip">x86</a><br><br>
+	Sublime Text Plugin: <a href="https://github.com/sazlang/saz-sublime-plugin/releases/latest">latest release</a>
+	<br><br>
+
+	<h1>Təlimatlar</h1>
+	Saz interaktiv shell'i üçün <code>saz</code> komandasını arqumentsiz çalışdırmaq kifayətdir.
+	<br><br>
+	<div class="code">
+		cd ./Downloads<br>
+		./saz<br>
+		> yaz("salam dünya");<br>
+		salam dünya
+	</div>
+	<br><br>
+	Fayldakı kodu çalışdırmaq üçün <code>saz [fayl-adı]</code> formasında saz'ı başladın. Bu zaman interaktiv shell açılmayacaq, fayldakı kod bitdikdə saz prossesi dayandıracaq.
+	<br><br>
+	<div class="code">
+		./saz salam-dünya.saz<br>
+		salam dünya
+	</div>
+	<br><br>
+	Həm fayl həm də interaktiv shell'i açmaq üçün <code>--shell</code> vəyaxud <code>-s</code> arqumentini verin.
+	<br><br>
+	<div class="code">
+		./saz salam-dünya.saz --shell<br>
+		salam dünya<br>
+		> yaz(2 + 2);<br>
+		5
+	</div>
+</div>
+
+</body>
+</html>
