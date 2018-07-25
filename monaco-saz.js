@@ -34,7 +34,7 @@ return {
       [/([a-z_$]|[^\x00-\x7F])([\w$]|[^\x00-\x7F])*/, { cases: { '@typeKeywords': 'keyword',
                                    '@keywords': 'keyword',
                                    '@default': 'identifier' } }],
-      [/[A-Z][\w\$]*/, 'type.identifier' ],  // to show class names nicely
+      [/[A-Z]([\w\$]|[^\x00-\x7F])*/, 'type.identifier' ],  // to show class names nicely
 
       // whitespace
       { include: '@whitespace' },
