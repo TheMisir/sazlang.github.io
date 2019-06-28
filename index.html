@@ -84,6 +84,7 @@
 
 <div class="topbar">
 	<div class="item item-left" onclick="_run()">▶ İŞLƏT</div>
+	<div class="item item-left" onclick="_share()">🔗 PAYLAŞ</div>
 	<div class="item item-right" onclick="window.location.href = './downloads.html';">YÜKLƏMƏLƏR</div>
 	<div class="item item-right item-open">ONLAYN EDİTOR</div>
 	<select class="item item-left" id="examples-select" onchange="update_editor();"></select>
@@ -116,8 +117,12 @@
 	monaco.languages.register({ id: 'saz' });
 	monaco.languages.setMonarchTokensProvider('saz', sazTokensProvider());
 	monaco.languages.registerCompletionItemProvider('saz', sazCompletionProvider());
+	var initialValue = examples_data[examples_selector.value];
+	if (location.hash && location.hash.length > 1) {
+		initialValue = decodeURIComponent(location.hash.substr(1));
+	}
 	var editor = monaco.editor.create(document.getElementById('container'), {
-		value: examples_data[examples_selector.value],
+		value: initialValue,
 		language: 'saz',
 		theme: 'vs-dark'
 	});
@@ -138,6 +143,16 @@
 	function _run() {
 		editor_console.innerHTML = "";
 		saz_run_string(editor.getValue());
+	}
+	function _share() {
+		location.hash = '#' + encodeURIComponent(editor.getValue());
+		var i=document.createElement('input');
+		i.value=location.href;
+		document.body.append(i);
+		i.select();
+		document.execCommand('copy');
+		i.remove();
+		alert('✅ Link kopyalandı');
 	}
 	saz_registeroutlistener(onprint);
 </script>
